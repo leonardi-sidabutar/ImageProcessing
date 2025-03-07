@@ -8,8 +8,6 @@ class TomatoSegmentationApp:
         self.root.title("Segmentasi Tingkat Kematangan Buah Tomat")
         root.geometry("695x560")
 
-        self.image_rgb = None  # Simpan gambar agar tidak dihapus oleh garbage collector
-
         # Frame Title --------------------------------------------------------------------------------------------------------
         self.frame_title = tk.Frame(root, padx=10, pady=10)
         self.frame_title.grid(row=0, column=0, columnspan=4, sticky="ew")
@@ -21,7 +19,11 @@ class TomatoSegmentationApp:
         
         # Frame Pengolahan --------------------------------------------------------------------------------------------------------
         self.frame_processing = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
-        self.frame_processing.grid(row=1, column=0, rowspan=3, sticky="ns")        
+        self.frame_processing.grid(row=1, column=0, rowspan=3, sticky="ns")
+
+
+        # Simpan gambar RGB (placeholder untuk kebutuhan lainnya)
+        self.image_rgb = None
        
         tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
         self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
@@ -64,6 +66,19 @@ class TomatoSegmentationApp:
 
         self.canvas_intensity = tk.Canvas(self.frame_images, width=150, height=150, bg="#ddd", border=1)
         self.canvas_intensity.grid(row=3, column=2, padx=5, pady=5)
+        
+        # Frame Logo ---------------------------------------------------------------------------------------------------------
+
+        self.frame_logo = tk.Frame(root,padx=5, pady=5, relief=tk.RIDGE, borderwidth=2)
+        self.frame_logo.grid(row=4, column=0, sticky="ew")
+        # Memuat gambar menggunakan Pillow
+        image = Image.open("tgd.png")  # Pastikan file logo berada dalam folder yang benar
+        image = image.resize((75,75))
+        self.logo = ImageTk.PhotoImage(image)  # Simpan gambar sebagai atribut instance
+
+        # Menampilkan gambar di Label (dalam frame_logo)
+        logo_label = tk.Label(self.frame_logo, image=self.logo)
+        logo_label.pack(pady=5)
 
         # Frame Hasil --------------------------------------------------------------------------------------------------------
         self.frame_results = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
