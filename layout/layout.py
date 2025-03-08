@@ -5,7 +5,7 @@ from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
 class TomatoSegmentationApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Segmentasi Tingkat Kematangan Buah Tomat")
+        self.root.title("Pengolahan Citra Kematangan Tomat Metode HSI")
         root.geometry("695x560")
 
     # Frame Title --------------------------------------------------------------------------------------------------------
@@ -13,7 +13,7 @@ class TomatoSegmentationApp:
         self.frame_title.grid(row=0, column=0, columnspan=4, sticky="ew")
         tk.Label(
             self.frame_title,
-            text="Pengolahan Citra Menentukan Tingkat Kematangan Buah Tomat",
+            text="Pengolahan Citra Menentukan Tingkat Kematangan Buah Tomat dengan Metode HSI",
             font=("Arial", 12, "bold")
         ).pack(pady=2)
         
