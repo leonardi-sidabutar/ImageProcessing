@@ -60,8 +60,9 @@ selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=
 
 print("8 Pixel Acak dan Nilai Hue-nya:")
 for idx, (y, x) in enumerate(selected_pixels):
-    hue_value = H[y, x] * 360  # Konversi ke derajat
-    print(f"Pixel {idx+1}: Posisi ({x}, {y}), Hue = {hue_value:.2f} derajat")
+    hue_value = H[y, x] # Konversi ke derajat
+    rgb_value = segmented_rgb[y, x]  # Ambil nilai RGB
+    print(f"Pixel {idx+1}: Posisi ({x}, {y}), RGB = {rgb_value}, Hue = {hue_value:.2f}")
 
 # Tandai pixel pada gambar Hue
 fig, ax = plt.subplots()
