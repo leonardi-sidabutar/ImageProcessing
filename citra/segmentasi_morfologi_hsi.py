@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat/setengah/1.jpg")
+img = cv2.imread("tomat/matang/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
@@ -41,6 +41,18 @@ H, S, I = hsi_img[:, :, 0], hsi_img[:, :, 1], hsi_img[:, :, 2]
 # === 7. PILIH 8 PIXEL ACAK ===
 pixel_indices = np.column_stack(np.where(mask > 0))  # Ambil indeks piksel dalam mask
 selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=False)]
+
+# === 7. PILIH 8 PIXEL KONSTAN ===
+selected_pixels = np.array([
+    [548, 924],
+    [459, 857],
+    [333, 694],
+    [336, 523],
+    [924, 349],
+    [1053, 655],
+    [958, 912],
+    [621, 602]
+])
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
 fig, ax = plt.subplots(1, 4, figsize=(20, 5))
