@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat/matang/1.jpg")
+img = cv2.imread("tomat.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
@@ -60,5 +60,19 @@ for (y, x) in selected_pixels:
 for idx, (y, x) in enumerate(selected_pixels):
     hue_value = H[y, x] * 360  # Konversi ke derajat
     print(f"Pixel {idx+1}: Posisi ({x}, {y}), Hue = {hue_value:.2f} derajat")
+
+# Ambil hanya piksel yang termasuk dalam objek tomat berdasarkan mask
+H_values = H[mask > 0]
+S_values = S[mask > 0]
+I_values = I[mask > 0]
+
+# Hitung rata-rata HSI
+H_mean = np.mean(H_values)
+S_mean = np.mean(S_values)
+I_mean = np.mean(I_values)
+
+print(f"Rata-rata Hue: {H_mean:.2f}")
+print(f"Rata-rata Saturation: {S_mean:.4f}")
+print(f"Rata-rata Intensity: {I_mean:.4f}")
 
 plt.show()
