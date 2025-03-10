@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat.jpg")
+img = cv2.imread("tomat/setengah/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
@@ -53,23 +53,46 @@ ax[2].set_title("Komponen Saturation")
 ax[3].imshow(I, cmap="gray")
 ax[3].set_title("Komponen Intensity")
 
+val_h = []
+val_s = []
+val_i = []
+
 for (y, x) in selected_pixels:
     for a in ax:
         a.scatter(x, y, facecolors='none', s=50, edgecolors='green')
 
 for idx, (y, x) in enumerate(selected_pixels):
-    hue_value = H[y, x] * 360  # Konversi ke derajat
-    print(f"Pixel {idx+1}: Posisi ({x}, {y}), Hue = {hue_value:.2f} derajat")
+    # hue_value = H[y, x] * 360  # Konversi ke derajat
+    hue_value = H[y, x] # Konversi ke derajat
+    s_value = S[y,x]
+    i_value = I[y,x]
+    rgb_value = segmented_rgb[y, x]  # Ambil nilai RGB
+    print(f"Pixel {idx+1}: Posisi ({x}, {y}), RGB = {rgb_value}, Hue = {hue_value:.4f}, S = {s_value:.4f}, I = {i_value:.4f}")
+    val_h.append(hue_value)
+    val_s.append(s_value)
+    val_i.append(i_value)
+
+# Hitung Rata-rata
+avg_h = np.mean(val_h)
+avg_s = np.mean(val_s)
+avg_i = np.mean(val_i)
 
 # Ambil hanya piksel yang termasuk dalam objek tomat berdasarkan mask
 H_values = H[mask > 0]
 S_values = S[mask > 0]
 I_values = I[mask > 0]
 
+
 # Hitung rata-rata HSI
 H_mean = np.mean(H_values)
 S_mean = np.mean(S_values)
 I_mean = np.mean(I_values)
+
+print(f"Rata - rata H = {avg_h:.4f}")
+print(f"Rata - rata S = {avg_s:.4f}")
+print(f"Rata - rata I = {avg_i:.4f}")
+
+print("====================================")
 
 print(f"Rata-rata Hue: {H_mean:.2f}")
 print(f"Rata-rata Saturation: {S_mean:.4f}")
