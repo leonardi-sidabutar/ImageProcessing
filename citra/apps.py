@@ -1,4 +1,6 @@
+import cv2
 import tkinter as tk
+import numpy as np
 from tkinter import filedialog
 from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
 
@@ -36,7 +38,7 @@ class TomatoSegmentationApp:
         tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
         self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
         self.label_filename.pack(pady=5)
-        tk.Button(self.frame_processing, text="Segmentasi", width=15).pack(pady=2)
+        tk.Button(self.frame_processing, text="Segmentasi", width=15, command=self.segmentasi).pack(pady=2)
         tk.Button(self.frame_processing, text="Konversi HSI", width=15).pack(pady=2)
         tk.Button(self.frame_processing, text="Proses", width=15, command=self.process).pack(pady=2)
         tk.Button(self.frame_processing, text="Reset", width=15, command=self.reset).pack(pady=2)
@@ -111,9 +113,9 @@ class TomatoSegmentationApp:
 
     def load_image(self):
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
-        filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
-        if filename:
-            self.label_filename.config(text=filename.split("/")[-1])  # Update label nama gambar
+        self.filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
+        if self.filename:
+            self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
 
             # Tampilkan loading
             self.label_loading = tk.Label(self.frame_processing, text="Loading...", font=("Arial", 10))
@@ -121,7 +123,7 @@ class TomatoSegmentationApp:
             self.root.update_idletasks()
             
             # Load gambar menggunakan PIL
-            image = Image.open(filename)
+            image = Image.open(self.filename)
             image = image.resize((150,150))
 
             # Dapatkan ukuran canvas
@@ -143,6 +145,37 @@ class TomatoSegmentationApp:
 
             # Sembunyikan loading
             self.label_loading.pack_forget()
+
+    def segmentasi(self):
+        if self.filename:
+            # === 1. Baca Citra ===
+            img = cv2.imread(self.filename)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+            # === 2. KONVERSI KE GRAYSCALE ===
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            # === 3. THRESHOLDING (OBJEK PUTIH, BACKGROUND HITAM) ===
+            _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+            # === 4. PERBAIKI MASK DENGAN MORPHOLOGICAL OPERATION ===
+            kernel = np.ones((5, 5), np.uint8)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
+            # === 5. SEGMENTASI (HAPUS BACKGROUND) ===
+            segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
+
+            # Konversi ke format PIL
+            segmented_pil = Image.fromarray(segmented_rgb)
+            segmented_pil = segmented_pil.resize((150, 150))
+
+            # Konversi ke format Tkinter
+            self.segmented_img = ImageTk.PhotoImage(segmented_pil)
+
+            # Bersihkan canvas dan tampilkan gambar
+            self.canvas_segmentasi.delete("all")
+            self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
 
     # Mencoba function baru
     def process(self):
