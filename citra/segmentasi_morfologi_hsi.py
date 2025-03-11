@@ -43,16 +43,16 @@ pixel_indices = np.column_stack(np.where(mask > 0))  # Ambil indeks piksel dalam
 selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=False)]
 
 # === 7. PILIH 8 PIXEL KONSTAN ===
-selected_pixels = np.array([
-    [548, 924],
-    [459, 857],
-    [333, 694],
-    [336, 523],
-    [924, 349],
-    [1053, 655],
-    [958, 912],
-    [621, 602]
-])
+# selected_pixels = np.array([
+#     [548, 924],
+#     [459, 857],
+#     [333, 694],
+#     [336, 523],
+#     [924, 349],
+#     [1053, 655],
+#     [958, 912],
+#     [621, 602]
+# ])
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
 fig, ax = plt.subplots(1, 4, figsize=(20, 5))
