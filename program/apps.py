@@ -3,8 +3,8 @@ import tkinter as tk
 import numpy as np
 from tkinter import filedialog
 from tkinter import messagebox  # Import messagebox
-
 from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
+import matplotlib.pyplot as plt
 
 class TomatoSegmentationApp:
     def __init__(self, root):
@@ -22,7 +22,9 @@ class TomatoSegmentationApp:
 
         root.geometry(f"{app_width}x{app_height}+{x}+{y}")
 
-        # self.center_window() # Memanggil Function Center
+        # Kondisi Awal FileName
+        self.filename = False
+
 
     # Frame Title --------------------------------------------------------------------------------------------------------
         self.frame_title = tk.Frame(root, padx=10, pady=10)
@@ -49,6 +51,7 @@ class TomatoSegmentationApp:
         # Simpan gambar RGB (placeholder untuk kebutuhan lainnya)
         self.image_rgb = None
        
+        # Tombol View
         tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
         self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
         self.label_filename.pack(pady=5)
@@ -125,18 +128,20 @@ class TomatoSegmentationApp:
         self.entry_kematangan = tk.Entry(self.inner_frame, width=25, justify="center", state="readonly")
         self.entry_kematangan.grid(row=2, column=0, columnspan=6, pady=2)
 
-    
-    def center_window(self):
-        self.root.update_idletasks()  # Pastikan ukuran jendela sudah diperbarui
-        width = self.root.winfo_width()
-        height = self.root.winfo_height()
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-
-        x = (screen_width // 2) - (width // 2)
-        y = (screen_height // 2) - (height // 2)
-
-        self.root.geometry(f"{width}x{height}+{x}+{y}")  # Atur posisi jendela
+    def _rgb2hsi(self):
+        image = self.segmented_rgb
+        image = image.astype(np.float32) / 255.0
+        R, G, B = image[:, :, 0], image[:, :, 1], image[:, :, 2]
+        I = (R + G + B) / 3
+        min_RGB = np.minimum(np.minimum(R, G), B)
+        S = 1 - (3 / (R + G + B + 1e-6)) * min_RGB  
+        num = 0.5 * ((R - G) + (R - B))
+        denom = np.sqrt((R - G) ** 2 + (R - B) * (G - B)) + 1e-6
+        theta = np.arccos(num / denom)
+        H = np.degrees(theta)
+        H[B > G] = 360 - H[B > G]
+        H = H / 360  
+        return np.stack([H, S, I], axis=-1)
 
     def load_image(self):
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
@@ -173,6 +178,7 @@ class TomatoSegmentationApp:
             # Sembunyikan loading
             self.label_loading.pack_forget()
 
+    # Tombol Segmentasi
     def segmentasi(self):
         if self.filename:
             # === 1. Baca Citra ===
@@ -191,10 +197,10 @@ class TomatoSegmentationApp:
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 
             # === 5. SEGMENTASI (HAPUS BACKGROUND) ===
-            segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
+            self.segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
 
             # Konversi ke format PIL
-            segmented_pil = Image.fromarray(segmented_rgb)
+            segmented_pil = Image.fromarray(self.segmented_rgb)
             segmented_pil = segmented_pil.resize((150, 150))
 
             # Konversi ke format Tkinter
@@ -203,19 +209,73 @@ class TomatoSegmentationApp:
             # Bersihkan canvas dan tampilkan gambar
             self.canvas_segmentasi.delete("all")
             self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
+        else:
+            messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
     # Tombol Proses Function
     def process(self):
-        self.entry_kematangan.config(state="normal")
-        self.entry_kematangan.delete(0,tk.END)
-        self.entry_kematangan.insert(0,"Matang")
-        self.entry_kematangan.config(state="readonly")
 
-        messagebox.showwarning("informasi","Proses Warning")
+        if self.filename:
+
+            # Melakukan Proses Segmentasi Citra
+            self.segmentasi()
+
+            # Melakukan Konversi Citra ke HSI
+            hsi_img = self._rgb2hsi()
+            self.H = hsi_img[:, :, 0]  # Hue (0 - 1)
+            self.S = hsi_img[:, :, 1]  # Saturation (0 - 1)
+            self.I = hsi_img[:, :, 2]  # Intensity (0 - 1)
+
+            # ====== Konversi H, S, I ke gambar dengan cara yang sama ======
+            def array_to_pil(image_array, cmap):
+                """Konversi array ke PIL Image menggunakan Matplotlib untuk konsistensi."""
+                fig, ax = plt.subplots(figsize=(1.5, 1.5), dpi=100)
+                ax.imshow(image_array, cmap=cmap)
+                ax.axis("off")
+                
+                fig.canvas.draw()
+                pil_image = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()), mode="RGBA")
+                plt.close(fig)
+                
+                # Konversi ke mode "RGB" untuk kompatibilitas dengan Tkinter
+                return pil_image.convert("RGB")
+
+            # Konversi semua komponen menggunakan metode yang sama
+            h_pil = array_to_pil(self.H, "hsv")
+            s_pil = array_to_pil(self.S, "gray")
+            i_pil = array_to_pil(self.I, "gray")
+
+            # Resize ke ukuran canvas (150x150)
+            h_pil = h_pil.resize((150, 150), Image.Resampling.NEAREST)
+            s_pil = s_pil.resize((150, 150), Image.Resampling.NEAREST)
+            i_pil = i_pil.resize((150, 150), Image.Resampling.NEAREST)
+
+            # Konversi ke Tkinter PhotoImage
+            self.h_img = ImageTk.PhotoImage(h_pil)
+            self.s_img = ImageTk.PhotoImage(s_pil)
+            self.i_img = ImageTk.PhotoImage(i_pil)
+
+            # Bersihkan Canvas sebelum menggambar ulang
+            self.canvas_hue.delete("all")
+            self.canvas_saturation.delete("all")
+            self.canvas_intensity.delete("all")
+
+            # Tampilkan gambar di Canvas
+            self.canvas_hue.create_image(75, 75, anchor=tk.CENTER, image=self.h_img)
+            self.canvas_saturation.create_image(75, 75, anchor=tk.CENTER, image=self.s_img)
+            self.canvas_intensity.create_image(75, 75, anchor=tk.CENTER, image=self.i_img)
+
+            self.entry_kematangan.config(state="normal")
+            self.entry_kematangan.delete(0,tk.END)
+            self.entry_kematangan.insert(0,"Matang")
+            self.entry_kematangan.config(state="readonly")
+        else:
+            messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
     # Tombol Reset Function
     def reset(self):
         """Reset tampilan ke kondisi awal"""
+        self.filename = False
         self.label_filename.config(text="[Nama Gambar]")
 
         # Hapus Gambar Dari Canvas
