@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat/matang/1.jpg")
+img = cv2.imread("../program/tomat/matang/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
