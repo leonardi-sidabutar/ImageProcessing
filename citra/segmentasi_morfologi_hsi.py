@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat/setengah/1.jpg")
+img = cv2.imread("tomat/matang/12.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
@@ -43,7 +43,7 @@ pixel_indices = np.column_stack(np.where(mask > 0))  # Ambil indeks piksel dalam
 selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=False)]
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
-fig, ax = plt.subplots(1, 4, figsize=(20, 5))
+fig, ax = plt.subplots(1, 6, figsize=(20, 5))
 ax[0].imshow(segmented_rgb)
 ax[0].set_title("Citra RGB")
 ax[1].imshow(H, cmap="hsv")
@@ -52,6 +52,8 @@ ax[2].imshow(S, cmap="gray")
 ax[2].set_title("Komponen Saturation")
 ax[3].imshow(I, cmap="gray")
 ax[3].set_title("Komponen Intensity")
+ax[4].imshow(mask)
+ax[5].imshow(gray)
 
 val_h = []
 val_s = []
