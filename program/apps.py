@@ -74,10 +74,10 @@ class TomatoSegmentationApp:
         self.canvas_rgb.grid(row=1, column=0, padx=5, pady=5)
 
         self.canvas_segmentasi = tk.Canvas(self.frame_images, width=150, height=150, bg="#333", border=1)
-        self.canvas_segmentasi.grid(row=1, column=1, padx=5, pady=5)
+        self.canvas_segmentasi.grid(row=1, column=2, padx=5, pady=5)
 
         self.canvas_hsi = tk.Canvas(self.frame_images, width=150, height=150, bg="#333", border=1)
-        self.canvas_hsi.grid(row=1, column=2, padx=5, pady=5)
+        self.canvas_hsi.grid(row=1, column=1, padx=5, pady=5)
 
         # Label kecil di atas setiap Canvas komponen HSI
         hsi_labels = ["H (Hue)", "S (Saturation)", "I (Intensity)"]
@@ -117,11 +117,14 @@ class TomatoSegmentationApp:
 
         # Baris pertama (H, S, I)
         tk.Label(self.inner_frame, text="H").grid(row=0, column=0, padx=5, pady=2)
-        tk.Entry(self.inner_frame, width=5).grid(row=0, column=1, padx=5, pady=2)
+        self.entry_h = tk.Entry(self.inner_frame, width=7, state="readonly")
+        self.entry_h.grid(row=0, column=1, padx=5, pady=2)
         tk.Label(self.inner_frame, text="S").grid(row=0, column=2, padx=5, pady=2)
-        tk.Entry(self.inner_frame, width=5).grid(row=0, column=3, padx=5, pady=2)
+        self.entry_i = tk.Entry(self.inner_frame, width=7, state="readonly")
+        self.entry_i.grid(row=0, column=3, padx=5, pady=2)
         tk.Label(self.inner_frame, text="I").grid(row=0, column=4, padx=5, pady=2)
-        tk.Entry(self.inner_frame, width=5).grid(row=0, column=5, padx=5, pady=2)
+        self.entry_s = tk.Entry(self.inner_frame, width=7, state="readonly")
+        self.entry_s.grid(row=0, column=5, padx=5, pady=2)
 
         # Baris kedua (Tingkat Kematangan)
         tk.Label(self.inner_frame, text="Tingkat Kematangan").grid(row=1, column=0, columnspan=6, pady=(10, 2))
@@ -195,6 +198,7 @@ class TomatoSegmentationApp:
             kernel = np.ones((5, 5), np.uint8)
             mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+            self.masked = mask
 
             # === 5. SEGMENTASI (HAPUS BACKGROUND) ===
             self.segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
@@ -272,10 +276,33 @@ class TomatoSegmentationApp:
             self.canvas_saturation.create_image(75, 75, anchor=tk.CENTER, image=self.s_img)
             self.canvas_intensity.create_image(75, 75, anchor=tk.CENTER, image=self.i_img)
 
+            H_val = self.H[self.masked > 0]
+            S_val = self.S[self.masked > 0]
+            I_val = self.I[self.masked > 0]
+
+            H_mean = round(np.mean(H_val),2)
+            S_mean = round(np.mean(S_val),4)
+            I_mean = round(np.mean(I_val),4)
+
             self.entry_kematangan.config(state="normal")
             self.entry_kematangan.delete(0,tk.END)
             self.entry_kematangan.insert(0,"Matang")
             self.entry_kematangan.config(state="readonly")
+
+            self.entry_h.config(state="normal")
+            self.entry_h.delete(0,tk.END)
+            self.entry_h.insert(0,H_mean)
+            self.entry_h.config(state="readonly")
+
+            self.entry_s.config(state="normal")
+            self.entry_s.delete(0,tk.END)
+            self.entry_s.insert(0,S_mean)
+            self.entry_s.config(state="readonly")
+
+            self.entry_i.config(state="normal")
+            self.entry_i.delete(0,tk.END)
+            self.entry_i.insert(0,I_mean)
+            self.entry_i.config(state="readonly")
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
@@ -296,6 +323,15 @@ class TomatoSegmentationApp:
         self.entry_kematangan.config(state="normal")
         self.entry_kematangan.delete(0,tk.END)
         self.entry_kematangan.config(state="readonly")
+        self.entry_h.config(state="normal")
+        self.entry_h.delete(0,tk.END)
+        self.entry_h.config(state="readonly")
+        self.entry_i.config(state="normal")
+        self.entry_i.delete(0,tk.END)
+        self.entry_i.config(state="readonly")
+        self.entry_s.config(state="normal")
+        self.entry_s.delete(0,tk.END)
+        self.entry_s.config(state="readonly")
 
 if __name__ == "__main__":
     root = tk.Tk()
