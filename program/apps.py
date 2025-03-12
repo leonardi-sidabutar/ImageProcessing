@@ -65,7 +65,7 @@ class TomatoSegmentationApp:
         self.frame_images.grid(row=1, column=1, columnspan=3)
 
         # Label kecil di atas setiap Canvas
-        labels = ["Gambar RGB", "Hasil Segmentasi", "Hasil Konversi HSI"]
+        labels = ["Gambar RGB", "Hasil Segmentasi", "Hasil Morfologi"]
         for col, text in enumerate(labels):
             tk.Label(self.frame_images, text=text, font=("Arial", 10)).grid(row=0, column=col, pady=(0, 2))
 
@@ -281,6 +281,9 @@ class TomatoSegmentationApp:
         # Hapus Gambar Dari Canvas
         self.canvas_rgb.delete("all")
         self.canvas_segmentasi.delete("all")
+        self.canvas_hue.delete("all")
+        self.canvas_saturation.delete("all")
+        self.canvas_intensity.delete("all")
         
         # Reset Entry
         self.entry_kematangan.config(state="normal")
