@@ -202,13 +202,20 @@ class TomatoSegmentationApp:
             # Konversi ke format PIL
             segmented_pil = Image.fromarray(self.segmented_rgb)
             segmented_pil = segmented_pil.resize((150, 150))
+            mask_pill = Image.fromarray(mask)
+            mask_pill = mask_pill.resize((150,150))
+
+            
 
             # Konversi ke format Tkinter
             self.segmented_img = ImageTk.PhotoImage(segmented_pil)
+            self.mask_pill = ImageTk.PhotoImage(mask_pill)
 
             # Bersihkan canvas dan tampilkan gambar
             self.canvas_segmentasi.delete("all")
             self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
+            self.canvas_hsi.delete("all")
+            self.canvas_hsi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
