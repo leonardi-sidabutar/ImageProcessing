@@ -21,6 +21,9 @@ def rgb_to_hsi(R, G, B):
     num = 0.5 * ((R - G) + (R - B))
     denom = np.sqrt((R - G)**2 + (R - B) * (G - B)) + 1e-6  # Tambah epsilon untuk hindari pembagian nol
     theta = np.arccos(num / denom)
+
+    print(num/denom)
+    print(np.degrees(np.arccos(0.9999975480829351)))
     
     if B > G:
         H = 360 - np.degrees(theta)
@@ -40,7 +43,7 @@ def rgb_to_hsi(R, G, B):
     return H, S, I, Hdeg
 
 # Input RGB
-R, G, B = 94, 4, 3
+R, G, B = 104, 0, 0
 H, S, I, Hdeg = rgb_to_hsi(R, G, B)
 
 # Cetak hasil

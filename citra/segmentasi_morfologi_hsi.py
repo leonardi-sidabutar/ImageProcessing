@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("../program/tomat/matang/1.jpg")
+img = cv2.imread("tomat/matang/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Konversi ke RGB untuk ditampilkan di matplotlib
 
 # === 2. KONVERSI KE GRAYSCALE ===
@@ -43,19 +43,19 @@ pixel_indices = np.column_stack(np.where(mask > 0))  # Ambil indeks piksel dalam
 selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=False)]
 
 # === 7. PILIH 8 PIXEL KONSTAN ===
-# selected_pixels = np.array([
-#     [548, 924],
-#     [459, 857],
-#     [333, 694],
-#     [336, 523],
-#     [924, 349],
-#     [1053, 655],
-#     [958, 912],
-#     [621, 602]
-# ])
+selected_pixels = np.array([
+    [548, 924],
+    [459, 857],
+    [333, 694],
+    [336, 523],
+    [924, 349],
+    [1053, 655],
+    [958, 912],
+    [621, 602]
+])
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
-fig, ax = plt.subplots(1, 6, figsize=(20, 5))
+fig, ax = plt.subplots(1, 4, figsize=(20, 10))
 ax[0].imshow(segmented_rgb)
 ax[0].set_title("Citra RGB")
 ax[1].imshow(H, cmap="hsv")
@@ -64,8 +64,14 @@ ax[2].imshow(S, cmap="gray")
 ax[2].set_title("Komponen Saturation")
 ax[3].imshow(I, cmap="gray")
 ax[3].set_title("Komponen Intensity")
-ax[4].imshow(mask)
-ax[5].imshow(gray)
+# ax[4].imshow(img_rgb)
+# ax[4].set_title("Citra RGB")
+# ax[5].imshow(mask)
+# ax[5].set_title("Mask")
+# ax[6].imshow(gray)
+# ax[6].set_title("Gray")
+# ax[6].imshow(gray)
+# ax[6].set_title("Gray")
 
 val_h = []
 val_s = []
@@ -73,7 +79,7 @@ val_i = []
 
 for (y, x) in selected_pixels:
     for a in ax:
-        a.scatter(x, y, facecolors='none', s=50, edgecolors='green')
+        a.scatter(x, y, facecolors='none', s=50, edgecolors='white')
 
 for idx, (y, x) in enumerate(selected_pixels):
     # hue_value = H[y, x] * 360  # Konversi ke derajat
