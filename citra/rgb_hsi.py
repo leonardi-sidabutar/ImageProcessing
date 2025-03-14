@@ -22,7 +22,8 @@ def rgb_to_hsi(R, G, B):
     denom = np.sqrt((R - G)**2 + (R - B) * (G - B)) + 1e-6  # Tambah epsilon untuk hindari pembagian nol
     theta = np.arccos(num / denom)
 
-    print(num/denom)
+    print(num)
+    print(denom)
     print(np.degrees(np.arccos(0.9999975480829351)))
     
     if B > G:
