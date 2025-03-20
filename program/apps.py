@@ -116,13 +116,13 @@ class TomatoSegmentationApp:
         self.inner_frame.pack(expand=True)
 
         # Baris pertama (H, S, I)
-        tk.Label(self.inner_frame, text="H").grid(row=0, column=0, padx=5, pady=2)
+        tk.Label(self.inner_frame, text="Hue:").grid(row=0, column=0, padx=5, pady=2)
         self.entry_h = tk.Entry(self.inner_frame, width=7, state="readonly")
         self.entry_h.grid(row=0, column=1, padx=5, pady=2)
-        tk.Label(self.inner_frame, text="S").grid(row=0, column=2, padx=5, pady=2)
+        tk.Label(self.inner_frame, text="Saturation:").grid(row=0, column=2, padx=5, pady=2)
         self.entry_i = tk.Entry(self.inner_frame, width=7, state="readonly")
         self.entry_i.grid(row=0, column=3, padx=5, pady=2)
-        tk.Label(self.inner_frame, text="I").grid(row=0, column=4, padx=5, pady=2)
+        tk.Label(self.inner_frame, text="Intensity:").grid(row=0, column=4, padx=5, pady=2)
         self.entry_s = tk.Entry(self.inner_frame, width=7, state="readonly")
         self.entry_s.grid(row=0, column=5, padx=5, pady=2)
 
