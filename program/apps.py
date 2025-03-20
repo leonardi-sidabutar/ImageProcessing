@@ -76,8 +76,8 @@ class TomatoSegmentationApp:
         self.canvas_segmentasi = tk.Canvas(self.frame_images, width=150, height=150, bg="#333", border=1)
         self.canvas_segmentasi.grid(row=1, column=2, padx=5, pady=5)
 
-        self.canvas_hsi = tk.Canvas(self.frame_images, width=150, height=150, bg="#333", border=1)
-        self.canvas_hsi.grid(row=1, column=1, padx=5, pady=5)
+        self.canvas_morfologi = tk.Canvas(self.frame_images, width=150, height=150, bg="#333", border=1)
+        self.canvas_morfologi.grid(row=1, column=1, padx=5, pady=5)
 
         # Label kecil di atas setiap Canvas komponen HSI
         hsi_labels = ["H (Hue)", "S (Saturation)", "I (Intensity)"]
@@ -218,8 +218,8 @@ class TomatoSegmentationApp:
             # Bersihkan canvas dan tampilkan gambar
             self.canvas_segmentasi.delete("all")
             self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
-            self.canvas_hsi.delete("all")
-            self.canvas_hsi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
+            self.canvas_morfologi.delete("all")
+            self.canvas_morfologi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
@@ -284,11 +284,6 @@ class TomatoSegmentationApp:
             S_mean = round(np.mean(S_val),4)
             I_mean = round(np.mean(I_val),4)
 
-            self.entry_kematangan.config(state="normal")
-            self.entry_kematangan.delete(0,tk.END)
-            self.entry_kematangan.insert(0,"Matang")
-            self.entry_kematangan.config(state="readonly")
-
             self.entry_h.config(state="normal")
             self.entry_h.delete(0,tk.END)
             self.entry_h.insert(0,H_mean)
@@ -303,6 +298,28 @@ class TomatoSegmentationApp:
             self.entry_i.delete(0,tk.END)
             self.entry_i.insert(0,I_mean)
             self.entry_i.config(state="readonly")
+
+            # Result Tingkat Kematangan Buah Tomat
+            self.entry_kematangan.config(state="normal")
+
+
+            if H_mean <= 0.42 and H_mean >= 0.26 :
+                self.entry_kematangan.delete(0,tk.END)
+                self.entry_kematangan.insert(0,"Matang")
+            elif H_mean <= 0.11 and H_mean >= 0.07 :
+                self.entry_kematangan.delete(0,tk.END)
+                self.entry_kematangan.insert(0,"Setengah Matang")
+            elif H_mean <= 0.18 and H_mean >= 0.13 :
+                self.entry_kematangan.delete(0,tk.END)
+                self.entry_kematangan.insert(0,"Mentah")
+            else:
+                self.entry_kematangan.delete(0,tk.END)
+                self.entry_kematangan.insert(0,"Tidak terdeteksi")
+
+
+            self.entry_kematangan.config(state="readonly")
+
+
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
@@ -315,6 +332,7 @@ class TomatoSegmentationApp:
         # Hapus Gambar Dari Canvas
         self.canvas_rgb.delete("all")
         self.canvas_segmentasi.delete("all")
+        self.canvas_morfologi.delete("all")
         self.canvas_hue.delete("all")
         self.canvas_saturation.delete("all")
         self.canvas_intensity.delete("all")
