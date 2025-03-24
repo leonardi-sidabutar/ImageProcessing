@@ -26,6 +26,17 @@ class TomatoSegmentationApp:
         self.filename = False
 
 
+    #  Menu Bar ----------------------------------------------------------------------------------------------------------
+        menu_bar = tk.Menu(self.root)
+        # Menambahkan perintah langsung
+        menu_bar.add_command(label="Buka Gambar", command=self.load_image)
+        menu_bar.add_command(label="Segmentasi", command=self.segmentasi)
+        menu_bar.add_command(label="Konversi HSI", command=self.process)
+        menu_bar.add_command(label="Proses", command=self.process)
+        menu_bar.add_command(label="Mulai Ulang", command=self.reset)
+        menu_bar.add_command(label="Keluar", command=self.root.quit)
+        self.root.config(menu=menu_bar)
+
     # Frame Title --------------------------------------------------------------------------------------------------------
         self.frame_title = tk.Frame(root, padx=10, pady=10)
         self.frame_title.grid(row=0, column=0, columnspan=4, sticky="ew")
