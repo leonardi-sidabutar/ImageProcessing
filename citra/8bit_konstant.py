@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # === 1. BACA CITRA ===
-img = cv2.imread("tomat.jpg")
+img = cv2.imread("tomat/matang/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -45,14 +45,14 @@ H, S, I = hsi_img[:, :, 0], hsi_img[:, :, 1], hsi_img[:, :, 2]
 
 # === 4. PILIH 8 PIXEL KONSTAN ===
 selected_pixels = np.array([
-    [1930, 1344],
-    [975, 611],
-    [1595, 1148],
-    [1728, 1559],
-    [1995, 763],
-    [1660, 1343],
-    [1503, 523],
-    [387, 1136]
+    [548, 924],
+    [459, 857],
+    [333, 694],
+    [336, 523],
+    [924, 349],
+    [1053, 655],
+    [958, 912],
+    [621, 602]
 ])
 
 # === 5. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
