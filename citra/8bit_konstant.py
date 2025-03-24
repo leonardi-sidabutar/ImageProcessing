@@ -89,6 +89,14 @@ avg_h = np.mean(val_h)
 avg_s = np.mean(val_s)
 avg_i = np.mean(val_i)
 
+sum_h = np.sum(val_h)
+sum_s = np.sum(val_s)
+sum_i = np.sum(val_i)
+
+print(f"jumlah H = {sum_h:.4f}")
+print(f"jumlah S = {sum_s:.4f}")
+print(f"jumlah I = {sum_i:.4f}")
+
 print(f"Rata - rata H = {avg_h:.4f}")
 print(f"Rata - rata S = {avg_s:.4f}")
 print(f"Rata - rata I = {avg_i:.4f}")
