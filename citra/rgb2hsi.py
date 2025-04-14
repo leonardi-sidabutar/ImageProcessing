@@ -29,7 +29,7 @@ def rgb_to_hsi(image):
     return H, S, I, avg_H, avg_S, avg_I
 
 # Baca gambar
-image = cv2.imread("tomat.jpg")  # Ubah dengan path gambar Anda
+image = cv2.imread("tomat/matang/1.jpg")  # Ubah dengan path gambar Anda
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Ubah dari BGR ke RGB
 
 # Konversi ke HSI dan hitung rata-rata

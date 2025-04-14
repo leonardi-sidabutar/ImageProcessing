@@ -22,10 +22,8 @@ def rgb_to_hsi(R, G, B):
     denom = np.sqrt((R - G)**2 + (R - B) * (G - B)) + 1e-6  # Tambah epsilon untuk hindari pembagian nol
     theta = np.arccos(num / denom)
 
-    print(num)
-    print(denom)
-    print(np.degrees(np.arccos(0.9999975480829351)))
-    
+    print(f"theta = :{360 - (theta * (180/3.14))}")
+   
     if B > G:
         H = 360 - np.degrees(theta)
         print('B > G')
@@ -36,15 +34,15 @@ def rgb_to_hsi(R, G, B):
    
     Hdeg = H
 
-    print(f"CHECKKKKK' : {(np.degrees(theta)):.4f}")
 
     # Normalisasi Hue ke [0,1]
     H /= 360.0
-    
+
+   
     return H, S, I, Hdeg
 
 # Input RGB
-R, G, B = 104, 0, 0
+R, G, B = 133, 0, 1
 H, S, I, Hdeg = rgb_to_hsi(R, G, B)
 
 # Cetak hasil
