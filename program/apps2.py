@@ -11,7 +11,7 @@ class TomatoSegmentationApp:
         self.root = root
         self.root.title("Pengolahan Citra Kematangan Tomat Metode HSI")
         
-        app_width = 525
+        app_width = 695
         app_height = 560
 
         screen_width = self.root.winfo_screenwidth()        # Lebar Window
@@ -34,9 +34,9 @@ class TomatoSegmentationApp:
         # Menambahkan perintah langsung
         menu_bar.add_command(label="Buka Gambar", command=self.load_image)
         menu_bar.add_command(label="Segmentasi", command=self.segmentasi)
-        menu_bar.add_command(label="Konversi HSI", command=self.konversi)
+        menu_bar.add_command(label="Konversi HSI", command=self.process)
         menu_bar.add_command(label="Proses", command=self.process)
-        menu_bar.add_command(label="Mulai Ulang", command=self.mulai_ulang)
+        menu_bar.add_command(label="Mulai Ulang", command=self.reset)
         menu_bar.add_command(label="Keluar", command=self.root.quit)
         self.root.config(menu=menu_bar)
 
@@ -46,16 +46,40 @@ class TomatoSegmentationApp:
         tk.Label(
             self.frame_title,
             text="Pengolahan Citra Menentukan Tingkat Kematangan Buah Tomat dengan Metode HSI",
-            font=("Arial", 9, "bold")
+            font=("Arial", 12, "bold")
         ).pack(pady=2)
         
+    # Frame Pengolahan --------------------------------------------------------------------------------------------------------
+        self.frame_processing = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
+        self.frame_processing.grid(row=1, column=0, rowspan=4, sticky="ns")
+
+        # Memuat gambar menggunakan Pillow
+        image = Image.open("tgd.png")  # Pastikan file logo berada dalam folder yang benar
+        image = image.resize((75,75))
+        self.logo = ImageTk.PhotoImage(image)  # Simpan gambar sebagai atribut instance
+
+        # Menampilkan gambar di Label (dalam frame_logo)
+        logo_label = tk.Label(self.frame_processing, image=self.logo)
+        logo_label.pack(pady=10)
+        
+        # Simpan gambar RGB (placeholder untuk kebutuhan lainnya)
+        self.image_rgb = None
+       
+        # Tombol View
+        tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
+        self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
+        self.label_filename.pack(pady=5)
+        tk.Button(self.frame_processing, text="Segmentasi", width=15, command=self.segmentasi).pack(pady=2)
+        tk.Button(self.frame_processing, text="Konversi HSI", width=15).pack(pady=2)
+        tk.Button(self.frame_processing, text="Proses", width=15, command=self.process).pack(pady=2)
+        tk.Button(self.frame_processing, text="Reset", width=15, command=self.reset).pack(pady=2)
         
     # Frame Gambar --------------------------------------------------------------------------------------------------------
         self.frame_images = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
         self.frame_images.grid(row=1, column=1, columnspan=3)
 
         # Label kecil di atas setiap Canvas
-        labels = ["Gambar RGB", "Hasil Morfologi", "Hasil Segmentasi"]
+        labels = ["Gambar RGB", "Hasil Segmentasi", "Hasil Morfologi"]
         for col, text in enumerate(labels):
             tk.Label(self.frame_images, text=text, font=("Arial", 10)).grid(row=0, column=col, pady=(0, 2))
 
@@ -144,11 +168,11 @@ class TomatoSegmentationApp:
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
         self.filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
         if self.filename:
-            # self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
+            self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
 
             # Tampilkan loading
-            # self.label_loading = tk.Label(self.frame_processing, text="Loading...", font=("Arial", 10))
-            # self.label_loading.pack()
+            self.label_loading = tk.Label(self.frame_processing, text="Loading...", font=("Arial", 10))
+            self.label_loading.pack()
             self.root.update_idletasks()
             
             # Load gambar menggunakan PIL
@@ -173,31 +197,7 @@ class TomatoSegmentationApp:
 
 
             # Sembunyikan loading
-            # self.label_loading.pack_forget()
-
-
-        self.canvas_segmentasi.delete("all")
-        self.canvas_morfologi.delete("all")
-        self.canvas_hue.delete("all")
-        self.canvas_saturation.delete("all")
-        self.canvas_intensity.delete("all")
-        
-        # Reset Entry
-        self.entry_kematangan.config(state="normal")
-        self.entry_kematangan.delete(0,tk.END)
-        self.entry_kematangan.config(state="readonly")
-        self.entry_h.config(state="normal")
-        self.entry_h.delete(0,tk.END)
-        self.entry_h.config(state="readonly")
-        self.entry_i.config(state="normal")
-        self.entry_i.delete(0,tk.END)
-        self.entry_i.config(state="readonly")
-        self.entry_s.config(state="normal")
-        self.entry_s.delete(0,tk.END)
-        self.entry_s.config(state="readonly")
-        self.entry_akurasi.config(state="normal")
-        self.entry_akurasi.delete(0,tk.END)
-        self.entry_akurasi.config(state="readonly")
+            self.label_loading.pack_forget()
 
     # Tombol Segmentasi
     def segmentasi(self):
@@ -240,27 +240,6 @@ class TomatoSegmentationApp:
             self.canvas_morfologi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
-
-        self.canvas_hue.delete("all")
-        self.canvas_saturation.delete("all")
-        self.canvas_intensity.delete("all")
-
-        # Reset Entry
-        self.entry_kematangan.config(state="normal")
-        self.entry_kematangan.delete(0,tk.END)
-        self.entry_kematangan.config(state="readonly")
-        self.entry_h.config(state="normal")
-        self.entry_h.delete(0,tk.END)
-        self.entry_h.config(state="readonly")
-        self.entry_i.config(state="normal")
-        self.entry_i.delete(0,tk.END)
-        self.entry_i.config(state="readonly")
-        self.entry_s.config(state="normal")
-        self.entry_s.delete(0,tk.END)
-        self.entry_s.config(state="readonly")
-        self.entry_akurasi.config(state="normal")
-        self.entry_akurasi.delete(0,tk.END)
-        self.entry_akurasi.config(state="readonly")
 
     def akurasi(self , valid):
         if valid == 1 :
@@ -382,79 +361,11 @@ class TomatoSegmentationApp:
         else:
             messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
-    def konversi(self):
-        if self.filename:
-
-            # Melakukan Proses Segmentasi Citra
-            self.segmentasi()
-
-            # Melakukan Konversi Citra ke HSI
-            hsi_img = self._rgb2hsi()
-            self.H = hsi_img[:, :, 0]  # Hue (0 - 1)
-            self.S = hsi_img[:, :, 1]  # Saturation (0 - 1)
-            self.I = hsi_img[:, :, 2]  # Intensity (0 - 1)
-
-            # ====== Konversi H, S, I ke gambar dengan cara yang sama ======
-            def array_to_pil(image_array, cmap):
-                """Konversi array ke PIL Image menggunakan Matplotlib untuk konsistensi."""
-                fig, ax = plt.subplots(figsize=(1.5, 1.5), dpi=100)
-                ax.imshow(image_array, cmap=cmap)
-                ax.axis("off")
-                
-                fig.canvas.draw()
-                pil_image = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()), mode="RGBA")
-                plt.close(fig)
-                
-                # Konversi ke mode "RGB" untuk kompatibilitas dengan Tkinter
-                return pil_image.convert("RGB")
-
-            # Konversi semua komponen menggunakan metode yang sama
-            h_pil = array_to_pil(self.H, "hsv")
-            s_pil = array_to_pil(self.S, "gray")
-            i_pil = array_to_pil(self.I, "gray")
-
-            # Resize ke ukuran canvas (150x150)
-            h_pil = h_pil.resize((150, 150), Image.Resampling.NEAREST)
-            s_pil = s_pil.resize((150, 150), Image.Resampling.NEAREST)
-            i_pil = i_pil.resize((150, 150), Image.Resampling.NEAREST)
-
-            # Konversi ke Tkinter PhotoImage
-            self.h_img = ImageTk.PhotoImage(h_pil)
-            self.s_img = ImageTk.PhotoImage(s_pil)
-            self.i_img = ImageTk.PhotoImage(i_pil)
-
-            # Bersihkan Canvas sebelum menggambar ulang
-            self.canvas_hue.delete("all")
-            self.canvas_saturation.delete("all")
-            self.canvas_intensity.delete("all")
-
-            # Tampilkan gambar di Canvas
-            self.canvas_hue.create_image(75, 75, anchor=tk.CENTER, image=self.h_img)
-            self.canvas_saturation.create_image(75, 75, anchor=tk.CENTER, image=self.s_img)
-            self.canvas_intensity.create_image(75, 75, anchor=tk.CENTER, image=self.i_img)
-
-        # Reset Entry
-        self.entry_kematangan.config(state="normal")
-        self.entry_kematangan.delete(0,tk.END)
-        self.entry_kematangan.config(state="readonly")
-        self.entry_h.config(state="normal")
-        self.entry_h.delete(0,tk.END)
-        self.entry_h.config(state="readonly")
-        self.entry_i.config(state="normal")
-        self.entry_i.delete(0,tk.END)
-        self.entry_i.config(state="readonly")
-        self.entry_s.config(state="normal")
-        self.entry_s.delete(0,tk.END)
-        self.entry_s.config(state="readonly")
-        self.entry_akurasi.config(state="normal")
-        self.entry_akurasi.delete(0,tk.END)
-        self.entry_akurasi.config(state="readonly")
-
     # Tombol Reset Function
-    def mulai_ulang(self):
+    def reset(self):
         """Reset tampilan ke kondisi awal"""
         self.filename = False
-        # self.label_filename.config(text="[Nama Gambar]")
+        self.label_filename.config(text="[Nama Gambar]")
 
         # Hapus Gambar Dari Canvas
         self.canvas_rgb.delete("all")

@@ -45,40 +45,35 @@ selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=
 # === 7. PILIH 8 PIXEL KONSTAN ===
 
 # Coordinat Mentah
-# selected_pixels = np.array([
-# [851, 354],
-# [633, 185],
-# [502, 143],
-# [428, 223],
-# [763, 552],
-# [760, 424],
-# [795, 148],
-# [938, 372],
-# ])
+selected_pixels = np.array([
+[851, 354],
+[633, 185],
+[502, 143],
+[428, 223],
+[763, 552],
+[760, 424],
+[795, 148],
+[938, 372],
+])
 
 # Coordinat Setengah_Matang
-selected_pixels = np.array([
-[298, 279],
-[984, 862],
-[293, 822],
-[497, 217],
-[789, 936],
-[899, 873],
-[1091, 531],
-[835, 424],
-])
+# selected_pixels = np.array([
+# [298, 279],
+# [984, 862],
+# [293, 822],
+# [497, 217],
+# [789, 936],
+# [899, 873],
+# [1091, 531],
+# [835, 424],
+# ])
 
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
-fig, ax = plt.subplots(1, 4, figsize=(20, 10))
-ax[0].imshow(segmented_rgb)
-ax[0].set_title("Citra RGB")
-ax[1].imshow(H, cmap="hsv")
-ax[1].set_title("Komponen Hue")
-ax[2].imshow(S, cmap="gray")
-ax[2].set_title("Komponen Saturation")
-ax[3].imshow(I, cmap="gray")
-ax[3].set_title("Komponen Intensity")
+fig, ax = plt.subplots()
+ax.imshow(segmented_rgb)
+ax.set_title("Citra RGB")
+
 # ax[4].imshow(img_rgb)
 # ax[4].set_title("Citra RGB")
 # ax[5].imshow(mask)
