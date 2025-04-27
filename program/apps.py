@@ -28,6 +28,7 @@ class TomatoSegmentationApp:
         self.data_valid = 9
         self.data_uji = 10
 
+        # Test
         self.data_same = 0
 
 
