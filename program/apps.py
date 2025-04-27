@@ -28,6 +28,8 @@ class TomatoSegmentationApp:
         self.data_valid = 9
         self.data_uji = 10
 
+        self.data_same = 0
+
 
     #  Menu Bar ----------------------------------------------------------------------------------------------------------
         menu_bar = tk.Menu(self.root)
@@ -141,6 +143,9 @@ class TomatoSegmentationApp:
         return np.stack([H, S, I], axis=-1)
 
     def load_image(self):
+
+        self.data_same = 0
+
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
         self.filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
         if self.filename:
@@ -275,112 +280,121 @@ class TomatoSegmentationApp:
     # Tombol Proses Function
     def process(self):
 
-        if self.filename:
-
-            # Melakukan Proses Segmentasi Citra
-            self.segmentasi()
-
-            # Melakukan Konversi Citra ke HSI
-            hsi_img = self._rgb2hsi()
-            self.H = hsi_img[:, :, 0]  # Hue (0 - 1)
-            self.S = hsi_img[:, :, 1]  # Saturation (0 - 1)
-            self.I = hsi_img[:, :, 2]  # Intensity (0 - 1)
-
-            # ====== Konversi H, S, I ke gambar dengan cara yang sama ======
-            def array_to_pil(image_array, cmap):
-                """Konversi array ke PIL Image menggunakan Matplotlib untuk konsistensi."""
-                fig, ax = plt.subplots(figsize=(1.5, 1.5), dpi=100)
-                ax.imshow(image_array, cmap=cmap)
-                ax.axis("off")
-                
-                fig.canvas.draw()
-                pil_image = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()), mode="RGBA")
-                plt.close(fig)
-                
-                # Konversi ke mode "RGB" untuk kompatibilitas dengan Tkinter
-                return pil_image.convert("RGB")
-
-            # Konversi semua komponen menggunakan metode yang sama
-            h_pil = array_to_pil(self.H, "hsv")
-            s_pil = array_to_pil(self.S, "gray")
-            i_pil = array_to_pil(self.I, "gray")
-
-            # Resize ke ukuran canvas (150x150)
-            h_pil = h_pil.resize((150, 150), Image.Resampling.NEAREST)
-            s_pil = s_pil.resize((150, 150), Image.Resampling.NEAREST)
-            i_pil = i_pil.resize((150, 150), Image.Resampling.NEAREST)
-
-            # Konversi ke Tkinter PhotoImage
-            self.h_img = ImageTk.PhotoImage(h_pil)
-            self.s_img = ImageTk.PhotoImage(s_pil)
-            self.i_img = ImageTk.PhotoImage(i_pil)
-
-            # Bersihkan Canvas sebelum menggambar ulang
-            self.canvas_hue.delete("all")
-            self.canvas_saturation.delete("all")
-            self.canvas_intensity.delete("all")
-
-            # Tampilkan gambar di Canvas
-            self.canvas_hue.create_image(75, 75, anchor=tk.CENTER, image=self.h_img)
-            self.canvas_saturation.create_image(75, 75, anchor=tk.CENTER, image=self.s_img)
-            self.canvas_intensity.create_image(75, 75, anchor=tk.CENTER, image=self.i_img)
-
-            H_val = self.H[self.masked > 0]
-            S_val = self.S[self.masked > 0]
-            I_val = self.I[self.masked > 0]
-
-            H_mean = round(np.mean(H_val),2)
-            S_mean = round(np.mean(S_val),4)
-            I_mean = round(np.mean(I_val),4)
-
-            self.entry_h.config(state="normal")
-            self.entry_h.delete(0,tk.END)
-            self.entry_h.insert(0,H_mean)
-            self.entry_h.config(state="readonly")
-
-            self.entry_s.config(state="normal")
-            self.entry_s.delete(0,tk.END)
-            self.entry_s.insert(0,S_mean)
-            self.entry_s.config(state="readonly")
-
-            self.entry_i.config(state="normal")
-            self.entry_i.delete(0,tk.END)
-            self.entry_i.insert(0,I_mean)
-            self.entry_i.config(state="readonly")
-
-            # Result Tingkat Kematangan Buah Tomat
-            self.entry_kematangan.config(state="normal")
-            self.entry_akurasi.config(state="normal")
+        # Check Data yang Sama
+        if self.data_same == 0:
 
 
-            if H_mean <= 0.42 and H_mean >= 0.26 :
-                self.entry_kematangan.delete(0,tk.END)
-                self.entry_kematangan.insert(0,"Matang")
-                self.entry_akurasi.delete(0,tk.END)
-                self.entry_akurasi.insert(0,(self.akurasi(1)))
-            elif H_mean <= 0.11 and H_mean >= 0.07 :
-                self.entry_kematangan.delete(0,tk.END)
-                self.entry_kematangan.insert(0,"Setengah Matang")
-                self.entry_akurasi.delete(0,tk.END)
-                self.entry_akurasi.insert(0,(self.akurasi(1)))
-            elif H_mean <= 0.18 and H_mean >= 0.13 :
-                self.entry_kematangan.delete(0,tk.END)
-                self.entry_kematangan.insert(0,"Mentah")
-                self.entry_akurasi.delete(0,tk.END)
-                self.entry_akurasi.insert(0,(self.akurasi(1)))
+            # Check File
+            if self.filename:
+
+                # Melakukan Proses Segmentasi Citra
+                self.segmentasi()
+
+                # Melakukan Konversi Citra ke HSI
+                hsi_img = self._rgb2hsi()
+                self.H = hsi_img[:, :, 0]  # Hue (0 - 1)
+                self.S = hsi_img[:, :, 1]  # Saturation (0 - 1)
+                self.I = hsi_img[:, :, 2]  # Intensity (0 - 1)
+
+                # ====== Konversi H, S, I ke gambar dengan cara yang sama ======
+                def array_to_pil(image_array, cmap):
+                    """Konversi array ke PIL Image menggunakan Matplotlib untuk konsistensi."""
+                    fig, ax = plt.subplots(figsize=(1.5, 1.5), dpi=100)
+                    ax.imshow(image_array, cmap=cmap)
+                    ax.axis("off")
+                    
+                    fig.canvas.draw()
+                    pil_image = Image.fromarray(np.array(fig.canvas.renderer.buffer_rgba()), mode="RGBA")
+                    plt.close(fig)
+                    
+                    # Konversi ke mode "RGB" untuk kompatibilitas dengan Tkinter
+                    return pil_image.convert("RGB")
+
+                # Konversi semua komponen menggunakan metode yang sama
+                h_pil = array_to_pil(self.H, "hsv")
+                s_pil = array_to_pil(self.S, "gray")
+                i_pil = array_to_pil(self.I, "gray")
+
+                # Resize ke ukuran canvas (150x150)
+                h_pil = h_pil.resize((150, 150), Image.Resampling.NEAREST)
+                s_pil = s_pil.resize((150, 150), Image.Resampling.NEAREST)
+                i_pil = i_pil.resize((150, 150), Image.Resampling.NEAREST)
+
+                # Konversi ke Tkinter PhotoImage
+                self.h_img = ImageTk.PhotoImage(h_pil)
+                self.s_img = ImageTk.PhotoImage(s_pil)
+                self.i_img = ImageTk.PhotoImage(i_pil)
+
+                # Bersihkan Canvas sebelum menggambar ulang
+                self.canvas_hue.delete("all")
+                self.canvas_saturation.delete("all")
+                self.canvas_intensity.delete("all")
+
+                # Tampilkan gambar di Canvas
+                self.canvas_hue.create_image(75, 75, anchor=tk.CENTER, image=self.h_img)
+                self.canvas_saturation.create_image(75, 75, anchor=tk.CENTER, image=self.s_img)
+                self.canvas_intensity.create_image(75, 75, anchor=tk.CENTER, image=self.i_img)
+
+                H_val = self.H[self.masked > 0]
+                S_val = self.S[self.masked > 0]
+                I_val = self.I[self.masked > 0]
+
+                H_mean = round(np.mean(H_val),2)
+                S_mean = round(np.mean(S_val),4)
+                I_mean = round(np.mean(I_val),4)
+
+                self.entry_h.config(state="normal")
+                self.entry_h.delete(0,tk.END)
+                self.entry_h.insert(0,H_mean)
+                self.entry_h.config(state="readonly")
+
+                self.entry_s.config(state="normal")
+                self.entry_s.delete(0,tk.END)
+                self.entry_s.insert(0,S_mean)
+                self.entry_s.config(state="readonly")
+
+                self.entry_i.config(state="normal")
+                self.entry_i.delete(0,tk.END)
+                self.entry_i.insert(0,I_mean)
+                self.entry_i.config(state="readonly")
+
+                # Result Tingkat Kematangan Buah Tomat
+                self.entry_kematangan.config(state="normal")
+                self.entry_akurasi.config(state="normal")
+
+
+                if H_mean <= 0.42 and H_mean >= 0.26 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Matang")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                elif H_mean <= 0.11 and H_mean >= 0.07 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Setengah Matang")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                elif H_mean <= 0.18 and H_mean >= 0.13 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Mentah")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                else:
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Tidak terdeteksi")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(0)))
+
+
+                self.entry_kematangan.config(state="readonly")
+                self.entry_akurasi.config(state="readonly")
+
+                self.data_same = 1
+
+
             else:
-                self.entry_kematangan.delete(0,tk.END)
-                self.entry_kematangan.insert(0,"Tidak terdeteksi")
-                self.entry_akurasi.delete(0,tk.END)
-                self.entry_akurasi.insert(0,(self.akurasi(0)))
-
-
-            self.entry_kematangan.config(state="readonly")
-            self.entry_akurasi.config(state="readonly")
-
-
+                messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
         else:
-            messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
+            messagebox.showerror("Peringatan","Anda Telah Melakukan Proses Untuk Data Ini, Silahkan Pilih Data Gambar Baru")
 
     def konversi(self):
         if self.filename:
