@@ -113,11 +113,12 @@ class TomatoSegmentationApp:
         self.entry_h = tk.Entry(self.inner_frame, width=7, state="readonly")
         self.entry_h.grid(row=0, column=1, padx=5, pady=2)
         tk.Label(self.inner_frame, text="Saturation:").grid(row=0, column=2, padx=5, pady=2)
-        self.entry_i = tk.Entry(self.inner_frame, width=7, state="readonly")
-        self.entry_i.grid(row=0, column=3, padx=5, pady=2)
-        tk.Label(self.inner_frame, text="Intensity:").grid(row=0, column=4, padx=5, pady=2)
         self.entry_s = tk.Entry(self.inner_frame, width=7, state="readonly")
-        self.entry_s.grid(row=0, column=5, padx=5, pady=2)
+        self.entry_s.grid(row=0, column=3, padx=5, pady=2)
+        tk.Label(self.inner_frame, text="Intensity:").grid(row=0, column=4, padx=5, pady=2)
+        self.entry_i = tk.Entry(self.inner_frame, width=7, state="readonly")
+        self.entry_i.grid(row=0, column=5, padx=5, pady=2)
+
 
         # Baris 2 ; Kolom 1 (Tingkat Kematangan)
         tk.Label(self.inner_frame, text="Tingkat Kematangan").grid(row=1, column=0, columnspan=3, pady=(10, 2))
