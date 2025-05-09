@@ -6,6 +6,7 @@ from tkinter import filedialog
 from tkinter import messagebox  # Import messagebox
 from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score  # pastikan ini diimpor di atas
 
 # Class KNN
 class KlasifikasiKematangan:
@@ -267,6 +268,7 @@ class TomatoSegmentationApp:
         self.entry_akurasi.delete(0,tk.END)
         self.entry_akurasi.config(state="readonly")
 
+
     # Tombol Segmentasi
     def segmentasi(self):
         if self.filename:
@@ -432,7 +434,10 @@ class TomatoSegmentationApp:
                 hasil = klasifikasi.classify_kematangan(H_mean, S_mean, I_mean)
                 self.entry_kematangan.delete(0,tk.END)
                 self.entry_kematangan.insert(0,hasil)
+                self.entry_akurasi.delete(0,tk.END)
+                self.entry_akurasi.insert(0,(self.akurasi(1)))
 
+                # Akurasi
 
                 # Result Tingkat Kematangan dengan Metode Rule Based Classification
                 # if H_mean <= 0.42 and H_mean >= 0.26 :
