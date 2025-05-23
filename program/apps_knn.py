@@ -1,12 +1,17 @@
+# Import CV2
 import cv2
+# Import Tkinter
 import tkinter as tk
-from sklearn.neighbors import KNeighborsClassifier  # For Machine Learning
-import numpy as np
 from tkinter import filedialog
 from tkinter import messagebox  # Import messagebox
-from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
+# Import Numpy
+import numpy as np
 import matplotlib.pyplot as plt
+# Import Scikit Learn - KNeighborsClassifier 
+from sklearn.neighbors import KNeighborsClassifier  # For Machine Learning
 from sklearn.metrics import accuracy_score  # pastikan ini diimpor di atas
+# Import PIL
+from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
 
 # Class KNN
 class KlasifikasiKematangan:
@@ -73,7 +78,7 @@ class TomatoSegmentationApp:
         self.root = root
         self.root.title("Pengolahan Citra Kematangan Tomat Metode HSI")
         
-        app_width = 525
+        app_width = 695
         app_height = 560
 
         screen_width = self.root.winfo_screenwidth()        # Lebar Window
@@ -111,9 +116,34 @@ class TomatoSegmentationApp:
         tk.Label(
             self.frame_title,
             text="Pengolahan Citra Menentukan Tingkat Kematangan Buah Tomat dengan Metode HSI",
-            font=("Arial", 9, "bold")
+            font=("Arial", 12, "bold")
         ).pack(pady=2)
         
+
+    # Frame Pengolahan --------------------------------------------------------------------------------------------------------
+        self.frame_processing = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
+        self.frame_processing.grid(row=1, column=0, rowspan=4, sticky="ns")
+
+        # Memuat gambar menggunakan Pillow
+        image = Image.open("tgd.png")  # Pastikan file logo berada dalam folder yang benar
+        image = image.resize((75,75))
+        self.logo = ImageTk.PhotoImage(image)  # Simpan gambar sebagai atribut instance
+
+        # Menampilkan gambar di Label (dalam frame_logo)
+        logo_label = tk.Label(self.frame_processing, image=self.logo)
+        logo_label.pack(pady=10)
+        
+        # Simpan gambar RGB (placeholder untuk kebutuhan lainnya)
+        self.image_rgb = None
+       
+        # Tombol View
+        tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
+        self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
+        self.label_filename.pack(pady=5)
+        tk.Button(self.frame_processing, text="Segmentasi", width=15, command=self.segmentasi).pack(pady=2)
+        tk.Button(self.frame_processing, text="Konversi HSI", width=15, command=self.konversi).pack(pady=2)
+        tk.Button(self.frame_processing, text="Proses", width=15, command=self.process).pack(pady=2)
+        tk.Button(self.frame_processing, text="Mulai Ulang", width=15, command=self.mulai_ulang).pack(pady=2)
         
     # Frame Gambar --------------------------------------------------------------------------------------------------------
         self.frame_images = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
