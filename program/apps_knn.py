@@ -243,7 +243,7 @@ class TomatoSegmentationApp:
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
         self.filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
         if self.filename:
-            # self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
+            self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
 
             # Tampilkan loading
             # self.label_loading = tk.Label(self.frame_processing, text="Loading...", font=("Arial", 10))
@@ -575,7 +575,7 @@ class TomatoSegmentationApp:
     def mulai_ulang(self):
         """Reset tampilan ke kondisi awal"""
         self.filename = False
-        # self.label_filename.config(text="[Nama Gambar]")
+        self.label_filename.config(text="[Nama Gambar]")
 
         # Hapus Gambar Dari Canvas
         self.canvas_rgb.delete("all")
