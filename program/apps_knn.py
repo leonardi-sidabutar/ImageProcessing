@@ -302,65 +302,66 @@ class TomatoSegmentationApp:
     # Tombol Segmentasi
     def segmentasi(self):
         if self.filename:
-            # === 1. Baca Citra ===
+            # === 1. Baca gambar dan konversi ke HSV & RGB ===
             img = cv2.imread(self.filename)
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            
-            # === 2. KONVERSI KE GRAYSCALE ===
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-            # === 3. THRESHOLDING (OBJEK PUTIH, BACKGROUND HITAM) ===
-            _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+            # === 2. Ambil area tengah 20x20 pixel ===
+            h_img, w_img = hsv.shape[:2]
+            cx, cy = w_img // 2, h_img // 2
+            win = 20
+            x1, x2 = max(cx - win // 2, 0), min(cx + win // 2, w_img)
+            y1, y2 = max(cy - win // 2, 0), min(cy + win // 2, h_img)
+            roi = hsv[y1:y2, x1:x2]
 
-            # === 4. PERBAIKI MASK DENGAN MORPHOLOGICAL OPERATION ===
+            # === 3. Hitung rata-rata HSV di area tengah ===
+            mean_h = int(np.mean(roi[:, :, 0]))
+            mean_s = int(np.mean(roi[:, :, 1]))
+            mean_v = int(np.mean(roi[:, :, 2]))
+
+            # === 4. Buat mask berdasarkan rentang adaptif dari HSV pusat ===
+            delta_h, delta_s, delta_v = 10, 50, 50
+            lower = np.array([max(mean_h - delta_h, 0), max(mean_s - delta_s, 0), max(mean_v - delta_v, 0)])
+            upper = np.array([min(mean_h + delta_h, 179), min(mean_s + delta_s, 255), min(mean_v + delta_v, 255)])
+            mask = cv2.inRange(hsv, lower, upper)
+
+            # === 5. Morphological cleaning ===
             kernel = np.ones((5, 5), np.uint8)
             mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
             self.masked = mask
 
-            # === 5. SEGMENTASI (HAPUS BACKGROUND) ===
+            # === 6. Segmentasi RGB ===
             self.segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
 
-            # Konversi ke format PIL
-            segmented_pil = Image.fromarray(self.segmented_rgb)
-            segmented_pil = segmented_pil.resize((150, 150))
-            mask_pill = Image.fromarray(mask)
-            mask_pill = mask_pill.resize((150,150))
+            # === 7. Tampilkan ke GUI ===
+            segmented_pil = Image.fromarray(self.segmented_rgb).resize((150, 150))
+            mask_pil = Image.fromarray(mask).resize((150, 150))
 
-            
-
-            # Konversi ke format Tkinter
             self.segmented_img = ImageTk.PhotoImage(segmented_pil)
-            self.mask_pill = ImageTk.PhotoImage(mask_pill)
+            self.mask_pill = ImageTk.PhotoImage(mask_pil)
 
-            # Bersihkan canvas dan tampilkan gambar
             self.canvas_segmentasi.delete("all")
             self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
             self.canvas_morfologi.delete("all")
             self.canvas_morfologi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
-        else:
-            messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
+        else:
+            messagebox.showerror("Peringatan", "Anda Belum Memilih Gambar")
+
+        # Kosongkan canvas HSI
         self.canvas_hue.delete("all")
         self.canvas_saturation.delete("all")
         self.canvas_intensity.delete("all")
 
-        # Reset Entry
-        self.entry_kematangan.config(state="normal")
-        self.entry_kematangan.delete(0,tk.END)
-        self.entry_kematangan.config(state="readonly")
-        self.entry_h.config(state="normal")
-        self.entry_h.delete(0,tk.END)
-        self.entry_h.config(state="readonly")
-        self.entry_i.config(state="normal")
-        self.entry_i.delete(0,tk.END)
-        self.entry_i.config(state="readonly")
-        self.entry_s.config(state="normal")
-        self.entry_s.delete(0,tk.END)
-        self.entry_s.config(state="readonly")
-        self.entry_akurasi.config(state="normal")
-        self.entry_akurasi.delete(0,tk.END)
-        self.entry_akurasi.config(state="readonly")
+        # Reset entry
+        for entry in [self.entry_kematangan, self.entry_h, self.entry_s, self.entry_i, self.entry_akurasi]:
+            entry.config(state="normal")
+            entry.delete(0, tk.END)
+            entry.config(state="readonly")
+
+
 
     def akurasi(self , valid):
         if valid == 1 :
