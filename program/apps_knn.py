@@ -32,7 +32,8 @@ class KlasifikasiKematangan:
             [0.18, 0.8343, 0.2593],
             [0.14, 0.8801, 0.2532],
             [0.17, 0.537, 0.5161],
-            [0.26, 0.3691, 0.1917]
+            [0.26, 0.3691, 0.1917],
+            [0.21, 0.4593, 0.5284]
         ]
         
         setengah = [
@@ -66,7 +67,7 @@ class KlasifikasiKematangan:
         ]
         
         X = np.array(mentah + setengah + matang)
-        y = ['Mentah'] * 12 + ['Setengah Matang'] * 11 + ['Matang'] * 13
+        y = ['Mentah'] * 13 + ['Setengah Matang'] * 11 + ['Matang'] * 13
         
         self.knn_model = KNeighborsClassifier(n_neighbors=3)
         self.knn_model.fit(X, y)
