@@ -1,136 +1,17 @@
-# Import CV2
 import cv2
-# Import Tkinter
 import tkinter as tk
+import numpy as np
 from tkinter import filedialog
 from tkinter import messagebox  # Import messagebox
-# Import Numpy
-import numpy as np
-import matplotlib.pyplot as plt
-# Import Scikit Learn - KNeighborsClassifier 
-from sklearn.neighbors import KNeighborsClassifier  # For Machine Learning
-from sklearn.metrics import accuracy_score  # pastikan ini diimpor di atas
-# Import PIL
 from PIL import Image, ImageTk  # Tambahkan PIL untuk memanipulasi gambar
-
-# Class KNN
-class KlasifikasiKematangan:
-    def __init__(self):
-        self.knn_model = None
-
-    def train_knn_model(self):
-        # Data dari tabel Anda
-        mentah = [
-            [0.15, 0.8854, 0.2118],
-            [0.14, 0.8514, 0.2674],
-            [0.14, 0.8644, 0.2684],
-            [0.15, 0.8552, 0.2467],
-            [0.15, 0.8534, 0.2336],
-            [0.13, 0.8613, 0.2609],
-            [0.16, 0.8593, 0.2504],
-            [0.15, 0.8863, 0.283],
-            [0.18, 0.8343, 0.2593],
-            [0.14, 0.8801, 0.2532],
-            [0.17, 0.537, 0.5161],
-            [0.26, 0.3691, 0.1917],
-            [0.21, 0.4593, 0.5284]
-        ]
-        
-        setengah = [
-            [0.08, 0.8386, 0.2447],
-            [0.10, 0.8355, 0.2322],
-            [0.07, 0.8424, 0.2641],
-            [0.09, 0.8610, 0.2248],
-            [0.08, 0.8478, 0.2189],
-            [0.09, 0.8344, 0.2354],
-            [0.09, 0.8833, 0.2801],
-            [0.11, 0.8396, 0.2204],
-            [0.10, 0.8580, 0.2771],
-            [0.11, 0.8515, 0.2296],
-            [0.08, 0.6163, 0.5049]
-        ]
-        
-        matang = [
-            [0.32, 0.8497, 0.1898],
-            [0.35, 0.8732, 0.18],
-            [0.28, 0.8531, 0.1865],
-            [0.24, 0.8696, 0.1998],
-            [0.31, 0.8529, 0.1813],
-            [0.28, 0.8905, 0.1803],
-            [0.42, 0.8784, 0.1897],
-            [0.35, 0.8599, 0.1923],
-            [0.33, 0.8518, 0.1894],
-            [0.26, 0.8824, 0.2013],
-            [0.02, 0.3967, 0.5752],
-            [0.03, 0.571, 0.442],
-            [0.08, 0.4258, 0.5141]
-        ]
-
-        # matang = [
-        # 1  [0.3, 0.977, 0.1766],
-        # 2,
-        # 3,
-        # 4,
-        # 5  [0.29, 0.963, 0.1712],
-        # 6  [0.24, 0.9818, 0.1691],
-        # 7  [0.38, 0.9834, 0.1642],
-        # 8  [0.27, 0.9692, 0.174],
-        # 9  ,
-        # 10 [0.22, 0.982, 0.2057],
-        # 11 [0.22, 0.9776, 0.2033],
-        # 12 [0.19, 0.9659, 0.2071]
-        # ]
-
-        # setengah = [
-        # 1     
-        # 2     
-        # 3     [0.08, 0.9796, 0.2981],
-        # 4     [0.06, 0.9712, 0.2473],
-        # 5     [0.06, 0.8581, 0.2396],
-        # 6     [0.08, 0.974, 0.2407],
-        # 7     [0.09, 0.9858, 0.289],
-        # 8     [0.08, 0.9654, 0.2389],
-        # 9     [0.07, 0.9761, 0.2922],
-        # 10    [0.05, 0.9573, 0.244],
-        # 11    [0.1, 0.9671, 0.2232],
-        # 12    [0.05, 0.9426, 0.1774]
-        # ]
-
-        # mentah = [
-        # 1     [0.14, 0.9809, 0.1992],
-        # 2     [0.14, 0.9797, 0.2613],
-        # 3     [0.15, 0.9825, 0.2652]
-        # 4
-        # 5     [0.13, 0.9776, 0.2088],
-        # 6     [0.13, 0.9821, 0.2579],
-        # 7     [0.17, 0.9806, 0.2439],
-        # 8     [0.15, 0.9862, 0.2877].
-        # 9     [0.15, 0.9695, 0.2129],
-        # 10    [0.13, 0.9841, 0.2481],
-        # 11
-        # 12    [0.14, 0.9814, 0.2873]
-        # ]
-        
-        X = np.array(mentah + setengah + matang)
-        y = ['Mentah'] * len(mentah) + ['Setengah Matang'] * len(setengah) + ['Matang'] * len(matang)
-        
-        self.knn_model = KNeighborsClassifier(n_neighbors=3)
-        self.knn_model.fit(X, y)
-        print("Model KNN telah dilatih.")
-
-    def classify_kematangan(self, h, s, i):
-        if self.knn_model is not None:
-            pred = self.knn_model.predict([[h, s, i]])[0]
-            return pred
-        return "Model belum dilatih"
-
+import matplotlib.pyplot as plt
 
 class TomatoSegmentationApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Pengolahan Citra Kematangan Tomat Metode HSI")
         
-        app_width = 695
+        app_width = 525
         app_height = 560
 
         screen_width = self.root.winfo_screenwidth()        # Lebar Window
@@ -168,34 +49,9 @@ class TomatoSegmentationApp:
         tk.Label(
             self.frame_title,
             text="Pengolahan Citra Menentukan Tingkat Kematangan Buah Tomat dengan Metode HSI",
-            font=("Arial", 12, "bold")
+            font=("Arial", 9, "bold")
         ).pack(pady=2)
         
-
-    # Frame Pengolahan --------------------------------------------------------------------------------------------------------
-        self.frame_processing = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
-        self.frame_processing.grid(row=1, column=0, rowspan=4, sticky="ns")
-
-        # Memuat gambar menggunakan Pillow
-        image = Image.open("tgd.png")  # Pastikan file logo berada dalam folder yang benar
-        image = image.resize((75,75))
-        self.logo = ImageTk.PhotoImage(image)  # Simpan gambar sebagai atribut instance
-
-        # Menampilkan gambar di Label (dalam frame_logo)
-        logo_label = tk.Label(self.frame_processing, image=self.logo)
-        logo_label.pack(pady=10)
-        
-        # Simpan gambar RGB (placeholder untuk kebutuhan lainnya)
-        self.image_rgb = None
-       
-        # Tombol View
-        tk.Button(self.frame_processing, text="Pilih Gambar", command=self.load_image).pack(pady=2)
-        self.label_filename = tk.Label(self.frame_processing, text="[Nama Gambar]", relief=tk.SUNKEN, width=20)
-        self.label_filename.pack(pady=5)
-        tk.Button(self.frame_processing, text="Segmentasi", width=15, command=self.segmentasi).pack(pady=2)
-        tk.Button(self.frame_processing, text="Konversi HSI", width=15, command=self.konversi).pack(pady=2)
-        tk.Button(self.frame_processing, text="Proses", width=15, command=self.process).pack(pady=2)
-        tk.Button(self.frame_processing, text="Mulai Ulang", width=15, command=self.mulai_ulang).pack(pady=2)
         
     # Frame Gambar --------------------------------------------------------------------------------------------------------
         self.frame_images = tk.Frame(root, padx=10, pady=10, relief=tk.RIDGE, borderwidth=2)
@@ -295,7 +151,7 @@ class TomatoSegmentationApp:
         """Memuat gambar yang dipilih dan menampilkannya di canvas_rgb"""
         self.filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg")])
         if self.filename:
-            self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
+            # self.label_filename.config(text=self.filename.split("/")[-1])  # Update label nama gambar
 
             # Tampilkan loading
             # self.label_loading = tk.Label(self.frame_processing, text="Loading...", font=("Arial", 10))
@@ -350,70 +206,68 @@ class TomatoSegmentationApp:
         self.entry_akurasi.delete(0,tk.END)
         self.entry_akurasi.config(state="readonly")
 
-
     # Tombol Segmentasi
     def segmentasi(self):
         if self.filename:
-            # === 1. Baca gambar dan konversi ke HSV & RGB ===
+            # === 1. Baca Citra ===
             img = cv2.imread(self.filename)
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            
+            # === 2. KONVERSI KE GRAYSCALE ===
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-            # === 2. Ambil area tengah 20x20 pixel ===
-            h_img, w_img = hsv.shape[:2]
-            cx, cy = w_img // 2, h_img // 2
-            win = 20
-            x1, x2 = max(cx - win // 2, 0), min(cx + win // 2, w_img)
-            y1, y2 = max(cy - win // 2, 0), min(cy + win // 2, h_img)
-            roi = hsv[y1:y2, x1:x2]
+            # === 3. THRESHOLDING (OBJEK PUTIH, BACKGROUND HITAM) ===
+            _, mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-            # === 3. Hitung rata-rata HSV di area tengah ===
-            mean_h = int(np.mean(roi[:, :, 0]))
-            mean_s = int(np.mean(roi[:, :, 1]))
-            mean_v = int(np.mean(roi[:, :, 2]))
-
-            # === 4. Buat mask berdasarkan rentang adaptif dari HSV pusat ===
-            delta_h, delta_s, delta_v = 10, 50, 50
-            lower = np.array([max(mean_h - delta_h, 0), max(mean_s - delta_s, 0), max(mean_v - delta_v, 0)])
-            upper = np.array([min(mean_h + delta_h, 179), min(mean_s + delta_s, 255), min(mean_v + delta_v, 255)])
-            mask = cv2.inRange(hsv, lower, upper)
-
-            # === 5. Morphological cleaning ===
+            # === 4. PERBAIKI MASK DENGAN MORPHOLOGICAL OPERATION ===
             kernel = np.ones((5, 5), np.uint8)
             mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
             mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
             self.masked = mask
 
-            # === 6. Segmentasi RGB ===
+            # === 5. SEGMENTASI (HAPUS BACKGROUND) ===
             self.segmented_rgb = cv2.bitwise_and(img_rgb, img_rgb, mask=mask)
 
-            # === 7. Tampilkan ke GUI ===
-            segmented_pil = Image.fromarray(self.segmented_rgb).resize((150, 150))
-            mask_pil = Image.fromarray(mask).resize((150, 150))
+            # Konversi ke format PIL
+            segmented_pil = Image.fromarray(self.segmented_rgb)
+            segmented_pil = segmented_pil.resize((150, 150))
+            mask_pill = Image.fromarray(mask)
+            mask_pill = mask_pill.resize((150,150))
 
+            
+
+            # Konversi ke format Tkinter
             self.segmented_img = ImageTk.PhotoImage(segmented_pil)
-            self.mask_pill = ImageTk.PhotoImage(mask_pil)
+            self.mask_pill = ImageTk.PhotoImage(mask_pill)
 
+            # Bersihkan canvas dan tampilkan gambar
             self.canvas_segmentasi.delete("all")
             self.canvas_segmentasi.create_image(75, 75, anchor=tk.CENTER, image=self.segmented_img)
             self.canvas_morfologi.delete("all")
             self.canvas_morfologi.create_image(75, 75, anchor=tk.CENTER, image=self.mask_pill)
-
         else:
-            messagebox.showerror("Peringatan", "Anda Belum Memilih Gambar")
+            messagebox.showerror("Peringatan","Anda Belum Memilih Gambar")
 
-        # Kosongkan canvas HSI
         self.canvas_hue.delete("all")
         self.canvas_saturation.delete("all")
         self.canvas_intensity.delete("all")
 
-        # Reset entry
-        for entry in [self.entry_kematangan, self.entry_h, self.entry_s, self.entry_i, self.entry_akurasi]:
-            entry.config(state="normal")
-            entry.delete(0, tk.END)
-            entry.config(state="readonly")
-
-
+        # Reset Entry
+        self.entry_kematangan.config(state="normal")
+        self.entry_kematangan.delete(0,tk.END)
+        self.entry_kematangan.config(state="readonly")
+        self.entry_h.config(state="normal")
+        self.entry_h.delete(0,tk.END)
+        self.entry_h.config(state="readonly")
+        self.entry_i.config(state="normal")
+        self.entry_i.delete(0,tk.END)
+        self.entry_i.config(state="readonly")
+        self.entry_s.config(state="normal")
+        self.entry_s.delete(0,tk.END)
+        self.entry_s.config(state="readonly")
+        self.entry_akurasi.config(state="normal")
+        self.entry_akurasi.delete(0,tk.END)
+        self.entry_akurasi.config(state="readonly")
 
     def akurasi(self , valid):
         if valid == 1 :
@@ -491,11 +345,6 @@ class TomatoSegmentationApp:
                 S_mean = round(np.mean(S_val),4)
                 I_mean = round(np.mean(I_val),4)
 
-                hasil_np = [round(np.mean(H_val),2), round(np.mean(S_val),4), round(np.mean(I_val),4)]
-                hasil_float = [round(float(i), 4) for i in hasil_np]
-                print(hasil_float)
-
-
                 self.entry_h.config(state="normal")
                 self.entry_h.delete(0,tk.END)
                 self.entry_h.insert(0,H_mean)
@@ -516,38 +365,26 @@ class TomatoSegmentationApp:
                 self.entry_akurasi.config(state="normal")
 
 
-                # Result Tingkat Kematangan dengan KNN
-                klasifikasi = KlasifikasiKematangan()
-                klasifikasi.train_knn_model()
-                hasil = klasifikasi.classify_kematangan(H_mean, S_mean, I_mean)
-                self.entry_kematangan.delete(0,tk.END)
-                self.entry_kematangan.insert(0,hasil)
-                self.entry_akurasi.delete(0,tk.END)
-                self.entry_akurasi.insert(0,(self.akurasi(1)))
-
-                # Akurasi
-
-                # Result Tingkat Kematangan dengan Metode Rule Based Classification
-                # if H_mean <= 0.42 and H_mean >= 0.26 :
-                #     self.entry_kematangan.delete(0,tk.END)
-                #     self.entry_kematangan.insert(0,"Matang")
-                #     self.entry_akurasi.delete(0,tk.END)
-                #     self.entry_akurasi.insert(0,(self.akurasi(1)))
-                # elif H_mean <= 0.11 and H_mean >= 0.07 :
-                #     self.entry_kematangan.delete(0,tk.END)
-                #     self.entry_kematangan.insert(0,"Setengah Matang")
-                #     self.entry_akurasi.delete(0,tk.END)
-                #     self.entry_akurasi.insert(0,(self.akurasi(1)))
-                # elif H_mean <= 0.18 and H_mean >= 0.13 :
-                #     self.entry_kematangan.delete(0,tk.END)
-                #     self.entry_kematangan.insert(0,"Mentah")
-                #     self.entry_akurasi.delete(0,tk.END)
-                #     self.entry_akurasi.insert(0,(self.akurasi(1)))
-                # else:
-                #     self.entry_kematangan.delete(0,tk.END)
-                #     self.entry_kematangan.insert(0,"Tidak terdeteksi")
-                #     self.entry_akurasi.delete(0,tk.END)
-                #     self.entry_akurasi.insert(0,(self.akurasi(0)))
+                if H_mean <= 0.42 and H_mean >= 0.26 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Matang")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                elif H_mean <= 0.11 and H_mean >= 0.07 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Setengah Matang")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                elif H_mean <= 0.18 and H_mean >= 0.13 :
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Mentah")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(1)))
+                else:
+                    self.entry_kematangan.delete(0,tk.END)
+                    self.entry_kematangan.insert(0,"Tidak terdeteksi")
+                    self.entry_akurasi.delete(0,tk.END)
+                    self.entry_akurasi.insert(0,(self.akurasi(0)))
 
 
                 self.entry_kematangan.config(state="readonly")
@@ -633,7 +470,7 @@ class TomatoSegmentationApp:
     def mulai_ulang(self):
         """Reset tampilan ke kondisi awal"""
         self.filename = False
-        self.label_filename.config(text="[Nama Gambar]")
+        # self.label_filename.config(text="[Nama Gambar]")
 
         # Hapus Gambar Dari Canvas
         self.canvas_rgb.delete("all")

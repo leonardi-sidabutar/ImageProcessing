@@ -65,9 +65,54 @@ class KlasifikasiKematangan:
             [0.03, 0.571, 0.442],
             [0.08, 0.4258, 0.5141]
         ]
+
+        # matang = [
+        # 1  [0.3, 0.977, 0.1766],
+        # 2,
+        # 3,
+        # 4,
+        # 5  [0.29, 0.963, 0.1712],
+        # 6  [0.24, 0.9818, 0.1691],
+        # 7  [0.38, 0.9834, 0.1642],
+        # 8  [0.27, 0.9692, 0.174],
+        # 9  ,
+        # 10 [0.22, 0.982, 0.2057],
+        # 11 [0.22, 0.9776, 0.2033],
+        # 12 [0.19, 0.9659, 0.2071]
+        # ]
+
+        # setengah = [
+        # 1     
+        # 2     
+        # 3     [0.08, 0.9796, 0.2981],
+        # 4     [0.06, 0.9712, 0.2473],
+        # 5     [0.06, 0.8581, 0.2396],
+        # 6     [0.08, 0.974, 0.2407],
+        # 7     [0.09, 0.9858, 0.289],
+        # 8     [0.08, 0.9654, 0.2389],
+        # 9     [0.07, 0.9761, 0.2922],
+        # 10    [0.05, 0.9573, 0.244],
+        # 11    [0.1, 0.9671, 0.2232],
+        # 12    [0.05, 0.9426, 0.1774]
+        # ]
+
+        # mentah = [
+        # 1     [0.14, 0.9809, 0.1992],
+        # 2     [0.14, 0.9797, 0.2613],
+        # 3     [0.15, 0.9825, 0.2652]
+        # 4
+        # 5     [0.13, 0.9776, 0.2088],
+        # 6     [0.13, 0.9821, 0.2579],
+        # 7     [0.17, 0.9806, 0.2439],
+        # 8     [0.15, 0.9862, 0.2877].
+        # 9     [0.15, 0.9695, 0.2129],
+        # 10    [0.13, 0.9841, 0.2481],
+        # 11
+        # 12    [0.14, 0.9814, 0.2873]
+        # ]
         
         X = np.array(mentah + setengah + matang)
-        y = ['Mentah'] * 13 + ['Setengah Matang'] * 11 + ['Matang'] * 13
+        y = ['Mentah'] * len(mentah) + ['Setengah Matang'] * len(setengah) + ['Matang'] * len(matang)
         
         self.knn_model = KNeighborsClassifier(n_neighbors=3)
         self.knn_model.fit(X, y)
@@ -445,6 +490,11 @@ class TomatoSegmentationApp:
                 H_mean = round(np.mean(H_val),2)
                 S_mean = round(np.mean(S_val),4)
                 I_mean = round(np.mean(I_val),4)
+
+                hasil_np = [round(np.mean(H_val),2), round(np.mean(S_val),4), round(np.mean(I_val),4)]
+                hasil_float = [round(float(i), 4) for i in hasil_np]
+                print(hasil_float)
+
 
                 self.entry_h.config(state="normal")
                 self.entry_h.delete(0,tk.END)

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Membaca gambar grayscale
-grayscale_image = cv2.imread('last.png', cv2.IMREAD_GRAYSCALE)
+grayscale_image = cv2.imread('program/tomat/matang/1.jpg', cv2.IMREAD_GRAYSCALE)
 
 # Terapkan colormap (cth: 'jet') untuk pewarnaan
 colorized_image = cv2.applyColorMap(grayscale_image, cv2.COLORMAP_JET)
