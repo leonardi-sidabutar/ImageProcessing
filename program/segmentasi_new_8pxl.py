@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Baca gambar dan konversi ke HSV dan RGB
-img = cv2.imread("tomat/matang/1.jpg")
+img = cv2.imread("tomat/mentah/1.jpg")
 img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
@@ -64,18 +64,31 @@ selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=
 
 
 # Coordinat Matang
-selected_pixels = np.array([
-[548,924],
-[459,857],
-[333,694],
-[336,523],
-[924,349],
-[1053,655],
-[958,912],
-[621,602],
-])
+# selected_pixels = np.array([
+# [262,510],
+# [713,719],
+# [161,631],
+# [295,325],
+# [828,453],
+# [951,400],
+# [674,880],
+# [715,420]
+# ])
+
 
 # Coordinat Mentah
+selected_pixels = np.array([
+[68 ,239],
+[301 ,509],
+[387 ,522],
+[556 ,198],
+[263 ,290],
+[52 ,282],
+[446 ,189],
+[501 ,155],
+])
+
+# Coordinat Setengah_Matang
 # selected_pixels = np.array([
 # [851, 354],
 # [633, 185],
@@ -87,17 +100,6 @@ selected_pixels = np.array([
 # [938, 372],
 # ])
 
-# Coordinat Setengah_Matang
-# selected_pixels = np.array([
-# [298, 279],
-# [984, 862],
-# [293, 822],
-# [497, 217],
-# [789, 936],
-# [899, 873],
-# [1091, 531],
-# [835, 424],
-# ])
 
 
 # === 8. TAMPILKAN PIXEL DI CITRA RGB DAN HSI ===
