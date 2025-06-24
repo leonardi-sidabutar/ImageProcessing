@@ -147,6 +147,10 @@ avg_h = np.mean(val_h)
 avg_s = np.mean(val_s)
 avg_i = np.mean(val_i)
 
+sum_h = np.sum(val_h)
+sum_s = np.sum(val_s)
+sum_i = np.sum(val_i)
+
 # Ambil hanya piksel yang termasuk dalam objek tomat berdasarkan mask
 H_values = H[mask > 0]
 S_values = S[mask > 0]
@@ -157,6 +161,10 @@ I_values = I[mask > 0]
 H_mean = np.mean(H_values)
 S_mean = np.mean(S_values)
 I_mean = np.mean(I_values)
+
+print(f"Sum H = {sum_h:.4f}")
+print(f"Sum S = {sum_s:.4f}")
+print(f"Sum I = {sum_i:.4f}")
 
 print(f"Rata - rata H = {avg_h:.4f}")
 print(f"Rata - rata S = {avg_s:.4f}")

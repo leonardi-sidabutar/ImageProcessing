@@ -22,7 +22,7 @@ def rgb_to_hsi(R, G, B):
     denom = np.sqrt((R - G)**2 + (R - B) * (G - B)) + 1e-6  # Tambah epsilon untuk hindari pembagian nol
     theta = np.arccos(num / denom)
 
-    a = S
+    a = (3 * min_RGB) / (R + G + B)
    
     print(f"TESST ======================== {a:.4f}") 
 
@@ -44,7 +44,7 @@ def rgb_to_hsi(R, G, B):
     return H, S, I, Hdeg
 
 # Input RGB
-R, G, B = 91, 47, 2
+R, G, B = 77, 62, 3
 
 H, S, I, Hdeg = rgb_to_hsi(R, G, B)
 
