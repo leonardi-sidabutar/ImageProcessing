@@ -76,29 +76,31 @@ selected_pixels = pixel_indices[np.random.choice(len(pixel_indices), 8, replace=
 # ])
 
 
-# Coordinat Mentah
-selected_pixels = np.array([
-[68 ,239],
-[301 ,509],
-[387 ,522],
-[556 ,198],
-[263 ,290],
-[52 ,282],
-[446 ,189],
-[501 ,155],
-])
-
 # Coordinat Setengah_Matang
 # selected_pixels = np.array([
-# [851, 354],
-# [633, 185],
-# [502, 143],
-# [428, 223],
-# [763, 552],
-# [760, 424],
-# [795, 148],
-# [938, 372],
+# [761, 851],
+# [376, 618],
+# [198, 489],
+# [471, 281],
+# [983, 589],
+# [221, 362],
+# [460, 798],
+# [769, 482],
 # ])
+
+
+# Coordinat Mentah
+selected_pixels = np.array([
+[165, 431],
+[307, 339],
+[426, 446],
+[664, 321],
+[487, 197],
+[354, 186],
+[437, 211],
+[555, 429],
+])
+
 
 
 
@@ -145,6 +147,10 @@ avg_h = np.mean(val_h)
 avg_s = np.mean(val_s)
 avg_i = np.mean(val_i)
 
+sum_h = np.sum(val_h)
+sum_s = np.sum(val_s)
+sum_i = np.sum(val_i)
+
 # Ambil hanya piksel yang termasuk dalam objek tomat berdasarkan mask
 H_values = H[mask > 0]
 S_values = S[mask > 0]
@@ -155,6 +161,10 @@ I_values = I[mask > 0]
 H_mean = np.mean(H_values)
 S_mean = np.mean(S_values)
 I_mean = np.mean(I_values)
+
+print(f"Sum H = {sum_h:.4f}")
+print(f"Sum S = {sum_s:.4f}")
+print(f"Sum I = {sum_i:.4f}")
 
 print(f"Rata - rata H = {avg_h:.4f}")
 print(f"Rata - rata S = {avg_s:.4f}")
